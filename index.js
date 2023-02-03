@@ -10,7 +10,7 @@ const session = require('express-session');
 
 app.use(session({
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     secret: 'SECRET' 
     }));
 //passport
@@ -18,11 +18,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, cb){
-    console.log('hello')
     cb(null, user);
 });
 passport.deserializeUser(function(obj, cb){
-    console.log('hello')
     cb(null, obj);
 });
 

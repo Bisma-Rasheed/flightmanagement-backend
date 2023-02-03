@@ -20,7 +20,6 @@ const returnRouter = function(passport){
     },
     function(accessToken, refreshToken, profile, done){
         userProfile=profile;
-        //console.log(userProfile);
         return done(null, userProfile);
     }
     ));
@@ -31,7 +30,7 @@ const returnRouter = function(passport){
     route.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: '/'}), async (req, res)=>{
         //console.log(userProfile)
         const userData = await userModel.find({email: userProfile.emails[0].value});
-        console.log(userData[0]);
+        //console.log(userData[0]);
         if(userData[0]===undefined){
             console.log('I am registering the user through facebook');
             try{
@@ -43,7 +42,8 @@ const returnRouter = function(passport){
                 const result = await newUser.save();
                 console.log('user added');
                 const user = await userModel.find({email: userProfile.emails[0].value});
-                res.send({data: user});
+                //res.send({data: user});
+                res.redirect('http://localhost:3000/dashboard');
             }
             catch(err){
                 res.send({error: err});
@@ -53,9 +53,15 @@ const returnRouter = function(passport){
         else{
             console.log('I am logging in the user through facebook');
             const user = await userModel.find({email: userProfile.emails[0].value});
-            res.send({data: user});
+            //res.send({data: user});
+            res.redirect('http://localhost:3000/dashboard');
         }
     });
+
+    route.get('/getuser', (req, res)=>{
+        // console.log(req.sessionStore.sessions[0].cookie);
+        console.log(userProfile.displayName);
+    })
 
     return route;
 }
