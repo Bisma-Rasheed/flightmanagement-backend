@@ -1,6 +1,7 @@
 const route = require('express').Router();
 const mongoose = require('mongoose');
 const FacebookStrategy = require('passport-facebook');
+require('https').globalAgent.options.rejectUnauthorized = false;
 
 const userSchema = require('../model/flightModel.js')(mongoose);
 const userModel = new mongoose.model('Users', userSchema);
@@ -9,28 +10,31 @@ var userProfile;
 
 const returnRouter = function(passport){
     route.get('/', (req, res)=>{
-        res.send({message: 'hello from bisma server'});
+        res.send({message: 'hello from server'});
     });
 
-    passport.use(new FacebookStrategy({
-        clientID: '1206221456655136',
-        clientSecret: '6ac763f1d8999ff6fb301d9b7554c04b',
-        callbackURL: "http://localhost:3001/auth/facebook/callback",
-        profileFields: ['id', 'displayName', 'email']
-    },
-    function(accessToken, refreshToken, profile, done){
-        userProfile=profile;
-        return done(null, userProfile);
+    try{
+        passport.use(new FacebookStrategy({
+            clientID: '1206221456655136',
+            clientSecret: '6ac763f1d8999ff6fb301d9b7554c04b',
+            callbackURL: "http://localhost:3001/auth/facebook/callback",
+            profileFields: ['id', 'displayName', 'email']
+        },
+        function(accessToken, refreshToken, profile, done){
+            userProfile=profile;
+            return done(null, userProfile);
+        }
+        ));
     }
-    ));
+    catch(err){
+        console.log(err);
+    }
 
     //facebook auth route
     route.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' })); //when user logs in through facebook
 
     route.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: '/'}), async (req, res)=>{
-        //console.log(userProfile)
         const userData = await userModel.find({email: userProfile.emails[0].value});
-        //console.log(userData[0]);
         if(userData[0]===undefined){
             console.log('I am registering the user through facebook');
             try{
@@ -41,9 +45,8 @@ const returnRouter = function(passport){
                 });
                 const result = await newUser.save();
                 console.log('user added');
-                const user = await userModel.find({email: userProfile.emails[0].value});
-                //res.send({data: user});
-                res.redirect('http://localhost:3000/dashboard');
+                const email = userProfile.emails[0].value;
+                res.redirect('http://localhost:3000/dashboard/'+email);
             }
             catch(err){
                 res.send({error: err});
@@ -51,21 +54,18 @@ const returnRouter = function(passport){
         }
         //if exists then login
         else{
-            console.log('I am logging in the user through facebook');
-            const user = await userModel.find({email: userProfile.emails[0].value});
-            //res.send({data: user});
-            res.redirect('http://localhost:3000/dashboard');
+            const email = userProfile.emails[0].value;
+            res.redirect('http://localhost:3000/dashboard/'+email);
         }
     });
 
-    route.get('/getuser', (req, res)=>{
-        // console.log(req.sessionStore.sessions[0].cookie);
-        console.log(userProfile.displayName);
+    route.post('/getuser', async (req, res)=>{
+        const userData = await userModel.find({email: req.body.email});
+        res.send({data: userData[0]});
     })
 
     return route;
 }
-
 
 module.exports = {
     route: returnRouter

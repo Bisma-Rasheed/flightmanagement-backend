@@ -26,7 +26,7 @@ passport.deserializeUser(function(obj, cb){
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 mongoose.set("strictQuery", false);
 
