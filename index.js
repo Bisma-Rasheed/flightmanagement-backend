@@ -18,9 +18,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, cb){
+    console.log('hello')
     cb(null, user);
 });
 passport.deserializeUser(function(obj, cb){
+    console.log('hello')
     cb(null, obj);
 });
 
@@ -40,7 +42,7 @@ mongoose.connect(`mongodb+srv://BismaRasheed:bisma@cluster0.pnt338c.mongodb.net/
 dotenv.config();
 const port = process.env.PORT;
 
-app.use('/', routes.route(app, passport));
+app.use('/', routes.route(passport));
 
 app.listen(port, ()=>{
     console.log(`server is listening on ${port}`)
