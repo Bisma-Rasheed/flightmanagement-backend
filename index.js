@@ -4,16 +4,18 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const routes = require('./controller/apiRoutes');
+
 const passport = require('passport');
 const session = require('express-session');
 
-
+//express session initialization
 app.use(session({
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     secret: 'SECRET' 
     }));
-//passport
+    
+//passport initialization
 app.use(passport.initialize());
 app.use(passport.session());
 

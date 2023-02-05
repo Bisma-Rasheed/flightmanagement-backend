@@ -65,28 +65,9 @@ const returnRouter = function (passport) {
     });
 
     route.get('/destroysession', (req, res)=>{
-        //req.logOut();
         req.session.destroy();
-        res.send({message: 'success'});
+        res.redirect("http://localhost:3000/");
     });
-
-    // route.post('/addflight', async (req, res) => {
-    //     var userData = await userModel.find({ email: req.body.email });
-    //     const _id = userData[0]._id;
-    //     const obj = {
-    //         from: req.body.from,
-    //         to: req.body.to,
-    //         dateOfDep: req.body.dep,
-    //         dateOfArrival: req.body.arr,
-    //         flightType: req.body.type
-    //     };
-    //     userData = await userModel.findByIdAndUpdate(
-    //         { _id },
-    //         { $push: { flight: obj } },
-    //         { new: true }
-    //     );
-    //     res.send({ data: userData });
-    // })
 
     return route;
 }
