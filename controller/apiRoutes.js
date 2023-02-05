@@ -17,7 +17,7 @@ const returnRouter = function (passport) {
         passport.use(new FacebookStrategy({
             clientID: '1206221456655136',
             clientSecret: '6ac763f1d8999ff6fb301d9b7554c04b',
-            callbackURL: "http://localhost:3001/auth/facebook/callback",
+            callbackURL: "https://ox-garb.cyclic.app/auth/facebook/callback",
             profileFields: ['id', 'displayName', 'email']
         },
             function (accessToken, refreshToken, profile, done) {
