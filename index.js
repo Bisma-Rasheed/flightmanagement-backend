@@ -40,10 +40,7 @@ mongoose.connect(`mongodb+srv://BismaRasheed:bisma@cluster0.pnt338c.mongodb.net/
 dotenv.config();
 const port = process.env.PORT;
 
-//app.use('/', routes.route(passport));
-app.get('/', (req, res) => {
-    res.send({ message: 'hello from server' });
-});
+app.use('/', routes.route(passport));
 
 app.listen(port, ()=>{
     console.log(`server is listening on ${port}`)
